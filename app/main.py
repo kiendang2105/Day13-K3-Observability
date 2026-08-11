@@ -4,6 +4,7 @@ import os
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
+from starlette.concurrency import run_in_threadpool
 from structlog.contextvars import bind_contextvars
 
 from .agent import LabAgent
@@ -61,7 +62,13 @@ async def chat(request: Request, body: ChatRequest) -> ChatResponse:
         payload={"message_preview": summarize_text(body.message)},
     )
     try:
-        result = agent.run(
+        # LabAgent.run là code đồng bộ và có thể chặn (retrieval, LLM call). Gọi
+        # thẳng trong handler async sẽ giữ event loop, khiến các request đồng thời
+        # xếp hàng nối đuôi nhau thay vì chạy song song. run_in_threadpool đẩy nó
+        # sang worker thread; Starlette copy contextvars sang nên correlation_id
+        # và trace context vẫn đi theo.
+        result = await run_in_threadpool(
+            agent.run,
             user_id=body.user_id,
             feature=body.feature,
             session_id=body.session_id,

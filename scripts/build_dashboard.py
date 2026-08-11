@@ -40,7 +40,7 @@ SERIES_LIGHT = ("#2a78d6", "#eb6834", "#1baf7a")
 SERIES_DARK = ("#3987e5", "#d95926", "#199e70")
 
 PLOT_W, PLOT_H = 640, 170
-PAD_L, PAD_R, PAD_T, PAD_B = 52, 14, 14, 26
+PAD_L, PAD_R, PAD_T, PAD_B = 52, 14, 18, 26
 
 
 # --------------------------------------------------------------------------- #
@@ -177,9 +177,8 @@ def _chrome(buckets: list[datetime], vmax: float, unit: str) -> str:
             f'<text class="tick" x="{x:.1f}" y="{baseline + 16}" text-anchor="middle">'
             f"{buckets[i].astimezone().strftime('%H:%M')}</text>"
         )
-    parts.append(
-        f'<text class="axis-unit" x="{PAD_L - 8}" y="{PAD_T - 3}" text-anchor="end">{html.escape(unit)}</text>'
-    )
+    # Don vi khong ve trong khung: no dung ngay tren nhan tick cao nhat va de len
+    # nhau. Header cua panel va cac o KPI da ghi don vi roi.
     return "".join(parts)
 
 
@@ -343,7 +342,6 @@ svg{width:100%;height:auto;display:block;overflow:visible}
 .grid line,line.grid{stroke:var(--grid);stroke-width:1}
 line.axis{stroke:var(--baseline);stroke-width:1}
 text.tick{fill:var(--muted);font-size:10px;font-variant-numeric:tabular-nums}
-text.axis-unit{fill:var(--muted);font-size:10px}
 line.threshold{stroke:var(--critical);stroke-width:1.5;stroke-dasharray:5 4}
 text.threshold-label{fill:var(--critical);font-size:10px;font-weight:600}
 path.bar.s0{fill:var(--s0)} path.bar.s1{fill:var(--s1)} path.bar.s2{fill:var(--s2)}

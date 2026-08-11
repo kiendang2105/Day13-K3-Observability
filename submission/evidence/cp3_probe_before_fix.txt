@@ -1,0 +1,17 @@
+incidents dang bat: {'rag_slow': True, 'tool_fail': False, 'cost_spike': False}
+gui 5 request dong thoi
+
+correlation_id    client_ms  header_ms  agent_ms  cho hang doi
+req-1be96915           4667       4204      3723           463
+req-718f8410           9981       2666      2651          7316
+req-b1595f93           9986       5317      2651          4669
+req-4a49cc5b          15299       7973      2651          7326
+req-e6fc441f          15300       7972      2651          7328
+
+wall-clock ca lo        : 15307 ms
+agent_ms lon nhat       : 3723 ms   <- con so dashboard doc
+client_ms lon nhat      : 15300 ms   <- con so nguoi dung chiu
+phan server khong ghi   : 11577 ms
+
+CANH BAO: client chiu gap hon 2 lan con so server ghi nhan.
+Request dang xep hang chu khong chay song song.
