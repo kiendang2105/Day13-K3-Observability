@@ -1,0 +1,14 @@
+$ python scripts/inject_incident.py
+200 {'ok': True, 'incidents': {'rag_slow': True, 'tool_fail': False, 'cost_spike': False}}
+
+$ python scripts/load_test.py --challenge --concurrency 5
+Challenge: day13-k3-observability-v1 | Cohort: K3
+[200] req-75ebf78a | refund | 13383.0ms
+[200] req-16d827a2 | refund | 13381.7ms
+[200] req-0ad72b98 | refund | 13383.2ms
+[200] req-f3649604 | refund | 13385.6ms
+[200] req-c284ff56 | refund | 13387.1ms
+
+Latency client do: ~13.4s / request, trong khi log ghi latency_ms = 2651ms.
+Nguong challenge (config/challenge.json): latency_threshold_ms = 2000.
+Chi tiet dieu tra: submission/REPORT.md muc 6.

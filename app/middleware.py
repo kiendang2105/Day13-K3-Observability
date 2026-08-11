@@ -8,6 +8,8 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from structlog.contextvars import bind_contextvars, clear_contextvars
 
+from .logging_config import get_logger
+
 REQUEST_ID_HEADER = "x-request-id"
 RESPONSE_TIME_HEADER = "x-response-time-ms"
 
@@ -39,10 +41,26 @@ class CorrelationIdMiddleware(BaseHTTPMiddleware):
         start = time.perf_counter()
         try:
             response = await call_next(request)
+            elapsed_ms = (time.perf_counter() - start) * 1000
+
+            # Access log o bien he thong. response_sent.latency_ms chi dem tu luc
+            # LabAgent.run bat dau, nen khong thay thoi gian request nam cho truoc
+            # do. Duoi su co rag_slow, hai con so lech nhau 5 lan - xem
+            # submission/REPORT.md muc 6.
+            get_logger().info(
+                "request_completed",
+                service="http",
+                correlation_id=correlation_id,
+                latency_ms=round(elapsed_ms),
+                payload={
+                    "method": request.method,
+                    "path": request.url.path,
+                    "status_code": response.status_code,
+                },
+            )
         finally:
             clear_contextvars()
 
-        elapsed_ms = (time.perf_counter() - start) * 1000
         response.headers[REQUEST_ID_HEADER] = correlation_id
         response.headers[RESPONSE_TIME_HEADER] = f"{elapsed_ms:.2f}"
 

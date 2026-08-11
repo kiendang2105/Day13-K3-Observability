@@ -1,4 +1,4 @@
-﻿# Alert và Runbook
+# Alert và Runbook
 
 Mỗi alert dựa trên triệu chứng người dùng hoặc SLO, không dựa trực tiếp vào tên implementation nội bộ. Dashboard mặc định dùng time range 60 phút và refresh 30 giây.
 
@@ -21,10 +21,10 @@ Mỗi alert dựa trên triệu chứng người dùng hoặc SLO, không dựa 
 - Tên: `elevated_error_rate`
 - Severity: `critical`
 - SLI/SLO liên quan: `error_rate_pct`, objective `error_rate_pct <= 2`, target `99.0%` trong cửa sổ 28 ngày.
-- Điều kiện kích hoạt: `error_rate_pct > 5 for 3 minutes`.
+- Điều kiện kích hoạt: `error_rate_pct > 2 for 3 minutes` — bằng đúng objective của SLO, không nới lỏng. Thêm `for 3 minutes` để một spike lẻ không tạo cảnh báo giả.
 - Ảnh hưởng tới người dùng: Một phần đáng kể request chat thất bại, người dùng không nhận được câu trả lời hoặc nhận lỗi 5xx.
 - Ba bước kiểm tra đầu tiên:
-  1. Mở dashboard panel `Error Rate and Breakdown`, xác nhận error rate vượt 5% và xem `error_breakdown` để biết loại lỗi nào đang chiếm nhiều nhất.
+  1. Mở dashboard panel `Error Rate and Breakdown`, xác nhận error rate vượt 2% và xem breakdown theo `error_type` để biết loại lỗi nào đang chiếm nhiều nhất.
   2. Mở log `request_failed` trong `data/logs.jsonl`, nhóm theo `error_type`, lấy vài `correlation_id` đại diện và kiểm tra payload/detail đã được che PII chưa.
   3. Kiểm tra `/health` và các dependency liên quan tới request path như prompt fetch, tracing export, retrieval hoặc mock LLM; đối chiếu thời điểm lỗi với thay đổi config/deploy/load test gần nhất.
 - Mitigation tạm thời: Rollback thay đổi gần nhất nếu lỗi bắt đầu sau deploy/config change, tắt incident đang bật, chuyển sang fallback prompt/local mode nếu lỗi đến từ prompt service, hoặc tạm disable feature gây lỗi nhiều nhất.
