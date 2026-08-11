@@ -1,0 +1,33 @@
+{"service": "day13-observability-lab", "env": "dev", "payload": {"tracing_enabled": true}, "event": "app_started", "level": "info", "ts": "2026-08-11T02:48:19.814997Z"}
+INFO:     127.0.0.1:49617 - "GET /health HTTP/1.1" 200 OK
+{"service": "api", "payload": {"message_preview": "What is your refund policy? My email is [REDACTED_EMAIL]"}, "event": "request_received", "level": "info", "ts": "2026-08-11T02:48:40.050555Z"}
+{"service": "api", "latency_ms": 1464, "tokens_in": 36, "tokens_out": 99, "cost_usd": 0.001593, "quality_score": 0.9, "payload": {"answer_preview": "Starter answer. Teams should improve this output logic and add better quality ch..."}, "event": "response_sent", "level": "info", "ts": "2026-08-11T02:48:42.331986Z"}
+INFO:     127.0.0.1:49633 - "POST /chat HTTP/1.1" 200 OK
+{"service": "api", "payload": {"message_preview": "Explain why metrics traces and logs work together"}, "event": "request_received", "level": "info", "ts": "2026-08-11T02:48:42.337993Z"}
+{"service": "api", "latency_ms": 1152, "tokens_in": 32, "tokens_out": 154, "cost_usd": 0.002406, "quality_score": 0.8, "payload": {"answer_preview": "Starter answer. Teams should improve this output logic and add better quality ch..."}, "event": "response_sent", "level": "info", "ts": "2026-08-11T02:48:43.493292Z"}
+INFO:     127.0.0.1:49633 - "POST /chat HTTP/1.1" 200 OK
+{"service": "api", "payload": {"message_preview": "Summarize the monitoring policy for production logging"}, "event": "request_received", "level": "info", "ts": "2026-08-11T02:48:43.512614Z"}
+{"service": "api", "latency_ms": 1132, "tokens_in": 39, "tokens_out": 99, "cost_usd": 0.001602, "quality_score": 0.8, "payload": {"answer_preview": "Starter answer. Teams should improve this output logic and add better quality ch..."}, "event": "response_sent", "level": "info", "ts": "2026-08-11T02:48:44.649450Z"}
+INFO:     127.0.0.1:49633 - "POST /chat HTTP/1.1" 200 OK
+{"service": "api", "payload": {"message_preview": "Can I get help with policy and monitoring?"}, "event": "request_received", "level": "info", "ts": "2026-08-11T02:48:44.667845Z"}
+{"service": "api", "latency_ms": 1118, "tokens_in": 35, "tokens_out": 142, "cost_usd": 0.002235, "quality_score": 0.9, "payload": {"answer_preview": "Starter answer. Teams should improve this output logic and add better quality ch..."}, "event": "response_sent", "level": "info", "ts": "2026-08-11T02:48:45.791781Z"}
+INFO:     127.0.0.1:49633 - "POST /chat HTTP/1.1" 200 OK
+{"service": "api", "payload": {"message_preview": "Here is my phone [REDACTED_PHONE_VN], what should be logged?"}, "event": "request_received", "level": "info", "ts": "2026-08-11T02:48:45.799788Z"}
+{"service": "api", "latency_ms": 1181, "tokens_in": 33, "tokens_out": 171, "cost_usd": 0.002664, "quality_score": 0.9, "payload": {"answer_preview": "Starter answer. Teams should improve this output logic and add better quality ch..."}, "event": "response_sent", "level": "info", "ts": "2026-08-11T02:48:46.985748Z"}
+INFO:     127.0.0.1:49633 - "POST /chat HTTP/1.1" 200 OK
+{"service": "api", "payload": {"message_preview": "Give me a short summary of the observability workflow"}, "event": "request_received", "level": "info", "ts": "2026-08-11T02:48:47.007765Z"}
+{"service": "api", "latency_ms": 1083, "tokens_in": 35, "tokens_out": 91, "cost_usd": 0.00147, "quality_score": 0.9, "payload": {"answer_preview": "Starter answer. Teams should improve this output logic and add better quality ch..."}, "event": "response_sent", "level": "info", "ts": "2026-08-11T02:48:48.096162Z"}
+INFO:     127.0.0.1:49633 - "POST /chat HTTP/1.1" 200 OK
+{"service": "api", "payload": {"message_preview": "What should not appear in app logs?"}, "event": "request_received", "level": "info", "ts": "2026-08-11T02:48:48.111750Z"}
+{"service": "api", "latency_ms": 1139, "tokens_in": 29, "tokens_out": 162, "cost_usd": 0.002517, "quality_score": 0.9, "payload": {"answer_preview": "Starter answer. Teams should improve this output logic and add better quality ch..."}, "event": "response_sent", "level": "info", "ts": "2026-08-11T02:48:49.256132Z"}
+INFO:     127.0.0.1:49633 - "POST /chat HTTP/1.1" 200 OK
+{"service": "api", "payload": {"message_preview": "How do I debug tail latency?"}, "event": "request_received", "level": "info", "ts": "2026-08-11T02:48:49.262708Z"}
+{"service": "api", "latency_ms": 1051, "tokens_in": 27, "tokens_out": 121, "cost_usd": 0.001896, "quality_score": 0.9, "payload": {"answer_preview": "Starter answer. Teams should improve this output logic and add better quality ch..."}, "event": "response_sent", "level": "info", "ts": "2026-08-11T02:48:50.318183Z"}
+INFO:     127.0.0.1:49633 - "POST /chat HTTP/1.1" 200 OK
+{"service": "api", "payload": {"message_preview": "What is the policy for PII and credit card [REDACTED_CREDIT_CARD]?"}, "event": "request_received", "level": "info", "ts": "2026-08-11T02:48:50.335060Z"}
+{"service": "api", "latency_ms": 1107, "tokens_in": 36, "tokens_out": 170, "cost_usd": 0.002658, "quality_score": 0.9, "payload": {"answer_preview": "Starter answer. Teams should improve this output logic and add better quality ch..."}, "event": "response_sent", "level": "info", "ts": "2026-08-11T02:48:51.445067Z"}
+INFO:     127.0.0.1:49633 - "POST /chat HTTP/1.1" 200 OK
+{"service": "api", "payload": {"message_preview": "How should alerts be designed?"}, "event": "request_received", "level": "info", "ts": "2026-08-11T02:48:51.458633Z"}
+{"service": "api", "latency_ms": 1676, "tokens_in": 28, "tokens_out": 172, "cost_usd": 0.002664, "quality_score": 0.9, "payload": {"answer_preview": "Starter answer. Teams should improve this output logic and add better quality ch..."}, "event": "response_sent", "level": "info", "ts": "2026-08-11T02:48:53.136267Z"}
+INFO:     127.0.0.1:49633 - "POST /chat HTTP/1.1" 200 OK
+ 

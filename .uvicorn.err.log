@@ -1,0 +1,31 @@
+INFO:     Will watch for changes in these directories: ['G:\\STUDYING TIME\\AI ACTION\\Lab 1\\Day13-K3-Observability']
+INFO:     Loading environment from '.env'
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [43604] using WatchFiles
+INFO:     Started server process [43380]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+Error while fetching prompt 'day13-chat-label:production': status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Returning fallback prompt for 'day13-chat-label:production' due to fetch error: status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Error while fetching prompt 'day13-chat-label:production': status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Returning fallback prompt for 'day13-chat-label:production' due to fetch error: status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Error while fetching prompt 'day13-chat-label:production': status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Returning fallback prompt for 'day13-chat-label:production' due to fetch error: status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Error while fetching prompt 'day13-chat-label:production': status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Returning fallback prompt for 'day13-chat-label:production' due to fetch error: status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Error while fetching prompt 'day13-chat-label:production': status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Returning fallback prompt for 'day13-chat-label:production' due to fetch error: status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Failed to export span batch code: 401, reason: Unauthorized
+Error while fetching prompt 'day13-chat-label:production': status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Returning fallback prompt for 'day13-chat-label:production' due to fetch error: status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Error while fetching prompt 'day13-chat-label:production': status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Returning fallback prompt for 'day13-chat-label:production' due to fetch error: status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Error while fetching prompt 'day13-chat-label:production': status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Returning fallback prompt for 'day13-chat-label:production' due to fetch error: status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Error while fetching prompt 'day13-chat-label:production': status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Returning fallback prompt for 'day13-chat-label:production' due to fetch error: status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Failed to export span batch code: 401, reason: Unauthorized
+Error while fetching prompt 'day13-chat-label:production': status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Returning fallback prompt for 'day13-chat-label:production' due to fetch error: status_code: 401, body: {'message': "Invalid credentials. Confirm that you've configured the correct host.", 'error': 'UnauthorizedError'}
+Failed to export span batch code: 401, reason: Unauthorized
+WARNING:  WatchFiles detected changes in 'app\middleware.py'. Reloading...
