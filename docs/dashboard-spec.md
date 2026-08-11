@@ -1,4 +1,4 @@
-﻿# Yêu cầu dashboard
+# Yêu cầu dashboard
 
 Contract có thể kiểm tra bằng máy nằm tại `config/dashboard.yaml`. Hướng dẫn dựng và kiểm tra runtime nằm tại [DASHBOARD_SETUP.md](DASHBOARD_SETUP.md).
 
@@ -22,121 +22,63 @@ Tiêu chuẩn trình bày:
 
 ## Công cụ sử dụng
 
-- Công cụ: spec-based dashboard, dùng dữ liệu runtime từ endpoint `/metrics`.
-- Nguồn chuẩn của contract: `config/dashboard.yaml`.
-- Nguồn log gốc: `data/logs.jsonl`.
+- Công cụ: `scripts/build_dashboard.py` — sinh một file HTML tự chứa, không cần cài thêm dependency và không gọi CDN.
+- Nguồn dữ liệu: `data/logs.jsonl`. Đây là nguồn chuẩn theo `README.md`; endpoint `/metrics` **không** dùng cho dashboard vì nó chỉ là bộ đếm cộng dồn trong RAM, không có trục thời gian nên không hỗ trợ cửa sổ 60 phút, `rate_per_minute` hay `sum_by_minute`, và về 0 mỗi lần restart.
+- Contract chấm điểm: `config/dashboard.yaml`. Tên panel, đơn vị và threshold trong HTML đọc thẳng từ file này, không hard-code.
 - Time range mặc định: 60 phút gần nhất.
 - Refresh mặc định: 30 giây.
 
-Lệnh xem dữ liệu hiện tại:
+## Cách chạy
 
 ```bash
-curl http://localhost:8000/metrics | python -m json.tool
+uvicorn app.main:app --reload --env-file .env   # terminal 1
+python scripts/load_test.py                     # terminal 2, tạo dữ liệu
+python scripts/build_dashboard.py               # dựng dashboard
+python scripts/build_dashboard.py --watch       # chế độ live, dựng lại mỗi 30 giây
 ```
 
-Snapshot hiện tại sau baseline:
+Mở `data/dashboard.html` bằng browser. Ở chế độ `--watch`, thẻ meta refresh trong trang tự tải lại đúng nhịp `refresh_seconds` của contract.
 
-```json
-{
-  "traffic": 10,
-  "latency_p50": 1170.0,
-  "latency_p95": 1668.0,
-  "latency_p99": 1668.0,
-  "avg_cost_usd": 0.0021,
-  "total_cost_usd": 0.0205,
-  "tokens_in_total": 330,
-  "tokens_out_total": 1303,
-  "error_rate_pct": 0.0,
-  "error_breakdown": {},
-  "quality_avg": 0.88
-}
+Nếu 60 phút gần đây không có log nào, script neo cửa sổ vào bản ghi mới nhất và hiện một dòng cảnh báo ngay trên trang — thà nói rõ là đang xem dữ liệu cũ còn hơn vẽ một dashboard trống khiến người đọc tưởng hệ thống không có traffic.
+
+Ví dụ output một lần chạy:
+
+```text
+Da dung D:\Day13-K3-Observability\data\dashboard.html
+  [DAT] latency  P95 1 047 ms
+  [DAT] traffic  12.5 req/phút
+  [DAT] errors   0.0%
+  [DAT] cost     0.0995 USD
+  [DAT] tokens   in 1 881 / out 6 259
+  [DAT] quality  0.88
 ```
 
 ## Panel Design
 
-| # | Nhóm | Tên panel | Nguồn dữ liệu | Đơn vị | Hiển thị | Threshold hoặc SLO line |
-|---|---|---|---|---|---|---|
-| 1 | Latency | Latency Percentiles | `/metrics`: `latency_p50`, `latency_p95`, `latency_p99` | milliseconds (ms) | Single Value hoặc line chart gồm P50/P95/P99 | P95 <= 3000 ms |
-| 2 | Traffic | Request Traffic | `/metrics`: `traffic` | requests, requests/min | Counter tổng request và gauge RPM/QPS | RPM >= 1 trong lúc load test |
-| 3 | Error | Error Rate and Breakdown | `/metrics`: `error_rate_pct`, `error_breakdown` | percent (%), count | Single Value error rate và table breakdown theo `error_type` | Error rate <= 2% |
-| 4 | Cost | Cost Over Time | `/metrics`: `total_cost_usd`, `avg_cost_usd` | USD | Single Value total cost, line hoặc gauge so với budget | Total cost <= 2.5 USD trong cửa sổ 60 phút |
-| 5 | Tokens | Input and Output Tokens | `/metrics`: `tokens_in_total`, `tokens_out_total` | tokens | Bar hoặc stacked value cho input/output tokens | Total tokens <= 50000 |
-| 6 | Quality | Quality Proxy | `/metrics`: `quality_avg` | score 0..1 | Single Value hoặc line chart quality trung bình | Quality average >= 0.75 |
+| # | Panel | Event và field trong `data/logs.jsonl` | Đơn vị | Hiển thị | Threshold |
+|---|---|---|---|---|---|
+| 1 | Latency percentiles | `response_sent.latency_ms` | ms | 3 KPI P50/P95/P99 + line chart theo phút | P95 ≤ 3000 ms |
+| 2 | Request traffic | `request_received` | requests, req/phút | Column chart theo phút | ≥ 1 req/phút |
+| 3 | Error rate and breakdown | `request_received`, `request_failed.error_type` | percent, count | KPI error rate + bảng breakdown | ≤ 2% |
+| 4 | Cost over time | `response_sent.cost_usd` | USD | Column chart theo phút + tổng | Tổng ≤ 2.5 USD |
+| 5 | Input and output tokens | `response_sent.tokens_in`, `tokens_out` | tokens | Grouped column 2 series | Mỗi chiều ≤ 50000 |
+| 6 | Quality proxy | `response_sent.quality_score` | score 0–1 | Line chart theo phút | Trung bình ≥ 0.75 |
 
-## Chi tiết từng panel
+## Quy ước trình bày
 
-### 1. Latency Percentiles
-
-- Mục tiêu: theo dõi tốc độ phản hồi của API AI.
-- Fields: `latency_p50`, `latency_p95`, `latency_p99`.
-- Đơn vị: ms.
-- Time range mặc định: 60 phút.
-- Threshold/SLO: vẽ SLO line tại `p95 = 3000 ms`.
-- Cảnh báo khi: `latency_p95 > 3000`.
-- Giá trị baseline hiện tại: P50 `1170.0 ms`, P95 `1668.0 ms`, P99 `1668.0 ms`.
-
-### 2. Request Traffic
-
-- Mục tiêu: biết hệ thống đang nhận bao nhiêu request.
-- Field: `traffic`.
-- Đơn vị: request hoặc request/phút.
-- Time range mặc định: 60 phút.
-- Threshold/SLO: trong lúc load test, RPM nên `>= 1`.
-- Cảnh báo khi: traffic bằng 0 trong giai đoạn cần có tải kiểm thử.
-- Giá trị baseline hiện tại: `10` requests.
-
-### 3. Error Rate and Breakdown
-
-- Mục tiêu: phát hiện lỗi runtime và phân loại nguyên nhân.
-- Fields: `error_rate_pct`, `error_breakdown`.
-- Đơn vị: `%` cho error rate, `count` cho breakdown.
-- Time range mặc định: 60 phút.
-- Threshold/SLO: error rate `<= 2%`.
-- Cảnh báo khi: `error_rate_pct > 2` hoặc một `error_type` tăng bất thường.
-- Giá trị baseline hiện tại: `error_rate_pct = 0.0`, `error_breakdown = {}`.
-
-### 4. Cost Over Time
-
-- Mục tiêu: theo dõi chi phí hiện tại so với ngân sách.
-- Fields: `total_cost_usd`, `avg_cost_usd`.
-- Đơn vị: USD.
-- Time range mặc định: 60 phút.
-- Threshold/SLO: tổng chi phí `<= 2.5 USD`.
-- Cảnh báo khi: `total_cost_usd > 2.5` hoặc `avg_cost_usd` tăng đột biến.
-- Giá trị baseline hiện tại: total `0.0205 USD`, average `0.0021 USD`.
-
-### 5. Input and Output Tokens
-
-- Mục tiêu: theo dõi lượng token tiêu thụ, tách input và output.
-- Fields: `tokens_in_total`, `tokens_out_total`.
-- Đơn vị: tokens.
-- Time range mặc định: 60 phút.
-- Threshold/SLO: tổng input + output tokens `<= 50000`.
-- Cảnh báo khi: token output tăng bất thường, vì thường kéo theo latency và cost tăng.
-- Giá trị baseline hiện tại: input `330`, output `1303`, total `1633`.
-
-### 6. Quality Proxy
-
-- Mục tiêu: theo dõi chất lượng trung bình của phản hồi.
-- Field: `quality_avg`.
-- Đơn vị: score từ `0` đến `1`.
-- Time range mặc định: 60 phút.
-- Threshold/SLO: quality average `>= 0.75`.
-- Cảnh báo khi: `quality_avg < 0.75`.
-- Giá trị baseline hiện tại: `0.88`.
+- Threshold vẽ bằng đường **đứt nét đỏ có nhãn**; lưới và trục là hairline liền nét. Đứt nét chỉ dành riêng cho ngưỡng, không dùng cho lưới — nếu lưới cũng đứt nét thì người đọc không phân biệt được đâu là ngưỡng.
+- Panel một series dùng một màu duy nhất, không tô đậm nhạt theo độ lớn. Panel nhiều series dùng bảng màu categorical cố định thứ tự (blue → orange → aqua) và **luôn có legend**.
+- Mỗi biểu đồ có một bảng dữ liệu đi kèm ở phần `Dạng bảng`, để giá trị không bao giờ chỉ đọc được bằng màu.
+- Trạng thái đạt/vượt ngưỡng hiển thị bằng icon kèm chữ, không dùng màu đơn độc.
+- Phút không có dữ liệu bị ngắt đoạn trên line chart thay vì nối thẳng qua — nối qua khoảng trống là bịa ra dữ liệu không tồn tại.
+- Mọi panel dùng chung một trục thời gian và một cửa sổ; không có panel nào có bộ lọc riêng.
 
 ## Evidence
 
-Do chưa dựng dashboard bằng Langfuse hoặc Grafana trong bước này, evidence được nộp ở dạng spec đầy đủ trong file này. Spec đã ghi rõ:
+- `submission/evidence/cp2_dashboard.png` — ảnh chụp dashboard đủ 6 panel, thấy rõ time range, đơn vị và đường threshold.
+- `submission/evidence/cp2_validate_dashboard.txt` — kết quả `python scripts/validate_dashboard.py`.
 
-- Tên panel.
-- Đơn vị.
-- Khoảng thời gian mặc định.
-- Threshold hoặc SLO line.
-- Công cụ sử dụng.
-- Mapping dữ liệu từ `/metrics`.
-
-Kiểm tra contract trước khi chụp evidence hoặc nộp báo cáo:
+Validator chỉ kiểm tra cấu trúc của `config/dashboard.yaml`; nó không chứng minh được biểu đồ dùng đúng dữ liệu. Vì vậy ảnh chụp dashboard runtime là bắt buộc, không thay thế bằng tài liệu spec được.
 
 ```bash
 python scripts/validate_dashboard.py

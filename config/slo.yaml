@@ -1,4 +1,4 @@
-﻿service: day13-observability-lab
+service: day13-observability-lab
 window: 28d
 slis:
   latency_p95_ms:
