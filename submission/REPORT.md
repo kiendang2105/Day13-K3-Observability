@@ -3,9 +3,16 @@
 ## 1. Thông tin nhóm
 
 - Tên nhóm:
-- Repository URL: https://github.com/kiendang2105/Day13-K3-Observability (nhánh `leduc`)
-- Commit SHA cuối:
-- Thành viên và vai trò:
+- Repository URL: https://github.com/kiendang2105/Day13-K3-Observability
+- Commit SHA cuối: a4f622f37ee32222378014ad8e641e4653306ffe
+
+| Thành viên | Mã sinh viên | Vai trò |
+| :--- | :--- | :--- |
+| Trần Duy Hoành | 2A202601777 | Logging & PII |
+| Lê Quang Đức | 2A202601767 | Tracing & Prompt Version |
+| Hán Vũ Long | 2A202601905 | Dashboard, SLO & Alert |
+| Đặng Trung Kiên |2A202601887 | Incident, Report & Demo |
+
 
 ## 2. Kết quả kỹ thuật
 
@@ -184,13 +191,8 @@ Nguyên nhân: `/chat` khai báo `async def`, nhưng bên trong gọi thẳng `a
 
 | Thành viên | Phần việc | Commit/PR | Điều đã học |
 |---|---|---|---|
-| **Lê Quang Đức** (`leduc1707`) | **Logging & PII.** Correlation ID trong middleware: sinh `req-<8hex>`, tái dùng `x-request-id` từ gateway nhưng validate trước khi tin, xoá contextvars giữa các request. Bind 5 field ngữ cảnh một lần đầu handler. Đặt `scrub_event` trước `JsonlFileProcessor`. Thêm pattern hộ chiếu và địa chỉ VN. | [`dfe70c7`](https://github.com/kiendang2105/Day13-K3-Observability/commit/dfe70c7) — 10 file, +347/−23 | Thứ tự processor trong structlog quyết định tất cả: `scrub_event` đặt sau chỗ ghi file thì PII đã nằm trên đĩa, xoá cũng vô nghĩa. Và ID từ bên ngoài phải validate — chứa `\n` là chèn được dòng log giả. |
-| | **Prompt versioning & rollback.** Tạo `day13-chat` v1/v2 trên Langfuse, gán `baseline`/`candidate`/`production`, promote `production` sang v2 rồi rollback về v1. Viết `check_prompt_trace.py` xác minh trace gắn đúng version. | [`c2109e9`](https://github.com/kiendang2105/Day13-K3-Observability/commit/c2109e9) | App im lặng fallback về prompt local khi Langfuse không trả về được — trace vẫn 200, chỉ metadata ghi `local-fallback` là sai. Loại lỗi này không tự báo, phải chủ động đi kiểm. |
-| | **Dashboard, SLO & Alert.** Viết `build_dashboard.py` sinh 6 panel từ `data/logs.jsonl`, đọc tên/đơn vị/threshold thẳng từ `config/dashboard.yaml`. Sửa spec đang map nhầm sang `/metrics`. Siết `elevated_error_rate` từ 5% về đúng SLO 2%. | [`c2109e9`](https://github.com/kiendang2105/Day13-K3-Observability/commit/c2109e9) — 18 file, +937/−108 | `/metrics` là bộ đếm cộng dồn trong RAM, không có trục thời gian nên không thể dựng cửa sổ 60 phút hay `rate_per_minute`, và về 0 mỗi lần restart. Nguồn của dashboard phải là log có timestamp. |
-| | **Điều tra challenge & fix.** Chạy `day13-k3-observability-v1`, nối Metrics → Traces → Logs, tìm ra cả nguyên nhân trực tiếp lẫn phần khuếch đại. Đẩy `agent.run` sang threadpool, thêm access log `request_completed`, viết `probe_concurrency.py` và test chống hồi quy. | [`cc11f1a`](https://github.com/kiendang2105/Day13-K3-Observability/commit/cc11f1a) — 10 file, +432/−31<br>[`3447c69`](https://github.com/kiendang2105/Day13-K3-Observability/commit/3447c69) | Chỉ số mình đang theo dõi có thể không phải chỉ số người dùng cảm nhận. Log ghi 2 651 ms, client chờ 15 300 ms, dashboard hiện dấu tích xanh suốt thời gian sự cố — vì `latency_ms` bắt đầu đếm **sau** khi request đã nằm chờ xong. Chọn sai điểm đặt đồng hồ thì có đủ log, đủ trace, đủ dashboard vẫn không thấy sự cố. |
+| **Trần Duy Hoành** | **Logging & PII.** Correlation ID trong middleware: sinh `req-<8hex>`, tái dùng `x-request-id` từ gateway nhưng validate trước khi tin, xoá contextvars giữa các request. Bind 5 field ngữ cảnh một lần đầu handler. Đặt `scrub_event` trước `JsonlFileProcessor`. Thêm pattern hộ chiếu và địa chỉ VN. | [`dfe70c7`](https://github.com/kiendang2105/Day13-K3-Observability/commit/dfe70c7) — 10 file, +347/−23 | Thứ tự processor trong structlog quyết định tất cả: `scrub_event` đặt sau chỗ ghi file thì PII đã nằm trên đĩa, xoá cũng vô nghĩa. Và ID từ bên ngoài phải validate — chứa `\n` là chèn được dòng log giả. |
+| **Lê Quang Đức** | **Prompt versioning & rollback.** Tạo `day13-chat` v1/v2 trên Langfuse, gán `baseline`/`candidate`/`production`, promote `production` sang v2 rồi rollback về v1. Viết `check_prompt_trace.py` xác minh trace gắn đúng version. | [`c2109e9`](https://github.com/kiendang2105/Day13-K3-Observability/commit/c2109e9) | App im lặng fallback về prompt local khi Langfuse không trả về được — trace vẫn 200, chỉ metadata ghi `local-fallback` là sai. Loại lỗi này không tự báo, phải chủ động đi kiểm. |
+| **Hán Vũ Long** | **Dashboard, SLO & Alert.** Viết `build_dashboard.py` sinh 6 panel từ `data/logs.jsonl`, đọc tên/đơn vị/threshold thẳng từ `config/dashboard.yaml`. Sửa spec đang map nhầm sang `/metrics`. Siết `elevated_error_rate` từ 5% về đúng SLO 2%. | [`c2109e9`](https://github.com/kiendang2105/Day13-K3-Observability/commit/c2109e9) — 18 file, +937/−108 | `/metrics` là bộ đếm cộng dồn trong RAM, không có trục thời gian nên không thể dựng cửa sổ 60 phút hay `rate_per_minute`, và về 0 mỗi lần restart. Nguồn của dashboard phải là log có timestamp. |
+| **Đặng Trung Kiên** | **Điều tra challenge & fix.** Chạy `day13-k3-observability-v1`, nối Metrics → Traces → Logs, tìm ra cả nguyên nhân trực tiếp lẫn phần khuếch đại. Đẩy `agent.run` sang threadpool, thêm access log `request_completed`, viết `probe_concurrency.py` và test chống hồi quy. | [`cc11f1a`](https://github.com/kiendang2105/Day13-K3-Observability/commit/cc11f1a) — 10 file, +432/−31<br>[`3447c69`](https://github.com/kiendang2105/Day13-K3-Observability/commit/3447c69) | Chỉ số mình đang theo dõi có thể không phải chỉ số người dùng cảm nhận. Log ghi 2 651 ms, client chờ 15 300 ms, dashboard hiện dấu tích xanh suốt thời gian sự cố — vì `latency_ms` bắt đầu đếm **sau** khi request đã nằm chờ xong. Chọn sai điểm đặt đồng hồ thì có đủ log, đủ trace, đủ dashboard vẫn không thấy sự cố. |
 
-Toàn bộ commit nằm trên nhánh `leduc`. Kiểm tra bằng:
-
-```bash
-git log --author=leduc1707 --oneline cd84f4f..HEAD
-```
